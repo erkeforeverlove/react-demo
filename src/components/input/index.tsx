@@ -1,4 +1,4 @@
-import React, { useState,useRef ,ReactElement} from 'react';
+import React, { useState ,ReactElement} from 'react';
 import { Input,Button,Space} from 'antd';
 import './index.css'
 import { Itodo } from '../ToDolist/typings';
@@ -9,9 +9,9 @@ interface InputProps{
 
 const InputComponent: React.FC<InputProps> = ({ addTodo }): ReactElement => { 
     const [inputVal,setInputVal] = useState<string>('')
-    const ClickFc = (): void => { 
+    const ClickHandle = (): void => { 
         if (inputVal) { 
-            addTodo({ id: new Date().getTime(), content: inputVal })
+            addTodo({ id: new Date().getTime(), content: inputVal, deleteFlag : false ,completeFlag : false})
         }
         setInputVal('')
     }
@@ -25,7 +25,7 @@ const InputComponent: React.FC<InputProps> = ({ addTodo }): ReactElement => {
                 onChange={handleChange}
                 value={inputVal}
                 allowClear />
-            <Button type="primary" onClick={ClickFc}>新增</Button>
+            <Button type="primary" onClick={ClickHandle}>新增</Button>
         </Space>
     )
 }

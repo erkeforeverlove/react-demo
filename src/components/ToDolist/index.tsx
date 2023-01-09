@@ -1,6 +1,7 @@
 import { Button,message } from 'antd';
-import React, { useCallback, useEffect, useReducer } from 'react';
-import Input from '../input'
+import { CheckboxValueType } from 'antd/es/checkbox/Group';
+import React, { useCallback, useEffect, useReducer, useState } from 'react';
+import Input from '../Input'
 import List from '../List'
 import './index.css'
 import { todoReducer } from './reducer';
@@ -13,6 +14,7 @@ function init(defaultState:Itodo[]):IState {
 }
 
 const ToDoList: React.FC = (): React.ReactElement => {
+    const [array, setArray] = useState<CheckboxValueType[]>([])
     const [state, dispatch] = useReducer(todoReducer, [], init)
     const [messageApi, contextHolder] = message.useMessage();
     
@@ -37,8 +39,32 @@ const ToDoList: React.FC = (): React.ReactElement => {
         dispatch({type:ACTION_TYPE.REMOVE_ALL,payload:null})
     }, [])
 
+    const removeBatch = useCallback((array:CheckboxValueType[]) => { 
+        dispatch({type:ACTION_TYPE.REMOVE_BATCH,payload:array})
+    }, [])
+
+    const getFlagList = (arr: CheckboxValueType[]): void => {
+        setArray(arr)
+    }
+
     const removeFc = (): void => {
         removeAll()
+    }
+
+    const batchDelete = (): void => {  
+        removeBatch(array)
+    }
+
+    const complete = (): void => { 
+        completeList(array)
+    }
+
+    const completeList = useCallback((array:CheckboxValueType[]) => { 
+        dispatch({type:ACTION_TYPE.COMPLETE,payload:array})
+    }, [])
+
+    const disabledFc = (): boolean => { 
+        return state.todoList.filter((item) => {return (item.completeFlag === false && item.deleteFlag === false) }).length === 0 
     }
 
     const setLocal = (): void => {
@@ -56,10 +82,12 @@ const ToDoList: React.FC = (): React.ReactElement => {
         <div className='App'>
             {contextHolder}
             <Input addTodo={addTodo}></Input>
-            <Button className='button' type="primary" onClick={ removeFc }>全部删除</Button>
+            <Button className='button' type="primary" disabled={ disabledFc() } onClick={ complete }>完成</Button>
+            <Button className='button' type="primary" disabled={ disabledFc() } onClick={ batchDelete }>批量删除</Button>
+            <Button className='button' type="primary" onClick={ removeFc }>全部删除(真实删除)</Button>
             <Button className='button' type="primary" onClick={ setLocal }>存入loaclStorage</Button>
             <Button className='button' type="primary" onClick={ clearLocal }>清空loaclStorage</Button>
-            <List todoList={state.todoList} removeTodo={ removeTodo }></List>
+            <List todoList={state.todoList} removeTodo={removeTodo} getFlagList={getFlagList}></List>
         </div>
     )
 }

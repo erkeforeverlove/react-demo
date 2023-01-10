@@ -3,8 +3,8 @@ import { CheckboxValueType } from "antd/es/checkbox/Group";
 export interface Itodo { 
     id: number;
     content: string;
-    deleteFlag: boolean;
-    completeFlag: boolean;
+    status: STATUS_TYPE;
+    isExpire: boolean;
 }
 
 export interface IState { 
@@ -22,5 +22,12 @@ export enum ACTION_TYPE {
     REMOVE_TODO = 'removeTodo',
     REMOVE_ALL = 'removeAll',
     REMOVE_BATCH = 'removeBatch',
-    COMPLETE = 'complete'
+    COMPLETE = 'complete',
+    SET_EXPIRE = 'setExpire'
+}
+
+export enum STATUS_TYPE { 
+    INCOMPLETE = 'incomplete',
+    COMPLETE = 'complete',
+    DELETED = 'deleted'
 }

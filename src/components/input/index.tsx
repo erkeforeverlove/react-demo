@@ -1,7 +1,7 @@
 import React, { useState ,ReactElement} from 'react';
 import { Input,Button,Space} from 'antd';
 import './index.css'
-import { Itodo } from '../ToDolist/typings';
+import { Itodo, STATUS_TYPE } from '../ToDolist/typings';
 
 interface InputProps{
     addTodo: (todo: Itodo) => void;
@@ -11,7 +11,7 @@ const InputComponent: React.FC<InputProps> = ({ addTodo }): ReactElement => {
     const [inputVal,setInputVal] = useState<string>('')
     const ClickHandle = (): void => { 
         if (inputVal) { 
-            addTodo({ id: new Date().getTime(), content: inputVal, deleteFlag : false ,completeFlag : false})
+            addTodo({ id: new Date().getTime(), content: inputVal, status: STATUS_TYPE.INCOMPLETE ,isExpire : false})
         }
         setInputVal('')
     }

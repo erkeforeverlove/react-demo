@@ -5,7 +5,7 @@ import Input from '../Input'
 import List from '../List'
 import './index.css'
 import { todoReducer } from './reducer';
-import { ACTION_TYPE, IState, Itodo } from './typings';
+import { ACTION_TYPE, IState, Itodo, STATUS_TYPE } from './typings';
 
 function init(defaultState:Itodo[]):IState { 
     return {
@@ -21,6 +21,7 @@ const ToDoList: React.FC = (): React.ReactElement => {
     useEffect(() => { 
         const todoList = JSON.parse(localStorage.getItem('todoList') || '[]')
         initTodo(todoList)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     
     const initTodo = useCallback((todoList: Itodo[]) => { 
@@ -64,8 +65,12 @@ const ToDoList: React.FC = (): React.ReactElement => {
     }, [])
 
     const disabledFc = (): boolean => { 
-        return state.todoList.filter((item) => {return (item.completeFlag === false && item.deleteFlag === false) }).length === 0 
+        return state.todoList.filter((item) => {return item.status === STATUS_TYPE.INCOMPLETE }).length === 0 
     }
+
+    const setExipre = useCallback((id: number) => { 
+        dispatch({type:ACTION_TYPE.SET_EXPIRE,payload:id})
+    }, [])
 
     const setLocal = (): void => {
         localStorage.setItem('todoList', JSON.stringify(state.todoList || []))
@@ -87,7 +92,7 @@ const ToDoList: React.FC = (): React.ReactElement => {
             <Button className='button' type="primary" onClick={ removeFc }>全部删除(真实删除)</Button>
             <Button className='button' type="primary" onClick={ setLocal }>存入loaclStorage</Button>
             <Button className='button' type="primary" onClick={ clearLocal }>清空loaclStorage</Button>
-            <List todoList={state.todoList} removeTodo={removeTodo} getFlagList={getFlagList}></List>
+            <List todoList={state.todoList} removeTodo={removeTodo} getFlagList={getFlagList} setExipre={ setExipre }></List>
         </div>
     )
 }
